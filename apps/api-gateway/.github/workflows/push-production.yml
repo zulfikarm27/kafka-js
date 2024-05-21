@@ -1,0 +1,52 @@
+name: push-production
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify job starting
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: microservice-monitor
+          SLACK_COLOR: #158aff
+          SLACK_TITLE: API Gateway Deployment To Production Starting
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+      - uses: actions/checkout@v4
+      - name: Set up Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'pnpm'
+      - name: pnpm install, build, and test
+        run: |
+          pnpm install
+          pnpm run build
+          pnpm run test
+      - name: Set Version ENV
+        run: |
+          export VERSION=$(grep version package.json | awk -F \" '{print $4}')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DO_ACCESS_TOKEN }}
+      - name: login to doctl registry
+        run: doctl registry login
+      - name: build docker image
+        run: docker build --target production --tag registry.digitalocean.com/vokraf-registry/api-gateway:${{ env.VERSION }} .
+      - name: push to docker registry
+        run: docker push registry.digitalocean.com/vokraf-registry/api-gateway:${{ env.VERSION }}
+      - name: Notify deployment status
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: microservice-monitor
+          SLACK_COLOR: ${{ job.status }} # or a specific color like 'good' or '#ff00ff'
+          SLACK_TITLE: API Gateway Deployment To Production
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}

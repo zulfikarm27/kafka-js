@@ -1,0 +1,21 @@
+name: push-release
+
+on:
+  push:
+    branches: ['release/*']
+
+jobs:
+  merge-to-staging:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.SERVICE_ACCOUNT_PAT }}
+      - name: merge into staging
+        run: |
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+          git fetch origin staging:staging
+          git checkout staging
+          git merge ${GITHUB_REF}
+          git push --set-upstream origin staging

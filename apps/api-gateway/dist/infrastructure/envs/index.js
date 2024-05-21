@@ -23,3 +23,4 @@ const envsConfig = () => {
     };
 };
 exports.envsConfig = envsConfig;
+//# sourceMappingURL=index.js.map

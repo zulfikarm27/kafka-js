@@ -1,0 +1,53 @@
+replicaCount: 1
+
+image:
+  repository: registry.digitalocean.com/vokraf-registry/api-gateway-staging
+  pullPolicy: Always
+  tag: '0.0.1'
+
+imagePullSecrets:
+  - name: vokraf-registry
+
+nameOverride: ''
+fullnameOverride: ''
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ''
+
+podAnnotations: {}
+
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress: {}
+
+resources: {}
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+podConfigMapName: 'microservice-staging-config'
+podSecretName: 'microservice-staging-secret'
