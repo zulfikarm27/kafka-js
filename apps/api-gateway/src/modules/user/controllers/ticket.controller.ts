@@ -17,6 +17,7 @@ export class CreateTicketController {
     editTicket: 'edit-ticket',
     getTicket: 'get-ticket',
     getAllTicket: 'get-all-ticket',
+    getUser: 'get-user',
   };
 
   constructor(
@@ -56,7 +57,7 @@ export class CreateTicketController {
     return res;
   }
   @Put('/ticket/:id')
-  async editTicket(@Param('id') id: number, body: any) {
+  async editTicket(@Param('id') id: number, @Body() body: any) {
     const res = await firstValueFrom(
       this.ticketClient.send(this.topic.editTicket, { id, body }),
     );
