@@ -9,6 +9,5 @@ export class CreateTicketDto {
   description!: string;
 
   @IsDefined({ message: 'date Is Required' })
-  @IsString({ message: 'date Not Valid' })
   date!: string;
 }

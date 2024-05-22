@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, HttpStatus } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { TicketUseCase } from 'src/domain/usecase/ticket.usecase';
 import { CreateTicketDto } from 'src/domain/models';
 import { MessagePattern, Payload } from '@nestjs/microservices';
@@ -9,8 +9,10 @@ export class TicketController {
   constructor(private readonly ticketUseCase: TicketUseCase) {}
 
   @MessagePattern('get-ticket')
-  async getById(@Param('id') id: number): Promise<TicketResponseDto> {
-    return await this.ticketUseCase.findById(id);
+  async getById(@Payload('id') id: number): Promise<any> {
+    const data = await this.ticketUseCase.findById(id);
+
+    return { ...data };
   }
 
   @MessagePattern('get-all-ticket')

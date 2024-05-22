@@ -32,11 +32,12 @@ export class CreateTicketController {
   @Get('/ticket/:id')
   async getById(@Param('id') id: number) {
     const res = await firstValueFrom(
-      this.ticketClient.send(this.topic.getTicket, id),
+      this.ticketClient.send(this.topic.getTicket, { id: id }),
     );
 
     return res;
   }
+
   @Get('/ticket')
   async getAll() {
     const res = await firstValueFrom(

@@ -34,14 +34,10 @@ export class TicketRepository implements ITicketRepository {
   }
 
   async findById(id: number): Promise<Ticket> {
-    try {
-      const result = await this.prismaService.ticket.findUniqueOrThrow({
-        where: { id },
-      });
+    const result = await this.prismaService.ticket.findUnique({
+      where: { id: Number(id) },
+    });
 
-      return { ...result, id };
-    } catch (err) {
-      throw new BadRequestException('Ticket Not Found');
-    }
+    return result;
   }
 }
