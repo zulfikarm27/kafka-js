@@ -11,6 +11,16 @@ export class UserUseCase {
     return this.userRepository.addUser(user);
   }
 
+  async getAll(): Promise<UserResponseDto[]> {
+    try {
+      const result = await this.userRepository.getAll();
+
+      return [...result];
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
+
   async findById(id: number): Promise<UserResponseDto> {
     try {
       const result = await this.userRepository.findById(id);

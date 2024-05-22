@@ -18,6 +18,21 @@ export class TicketRepository implements ITicketRepository {
     return result;
   }
 
+  async editTicket(ticket: any): Promise<any> {
+    const result = await this.prismaService.ticket.update({
+      where: { id: Number(ticket.id) },
+      data: { ...ticket },
+    });
+
+    return result;
+  }
+
+  async getAll(): Promise<Ticket[]> {
+    const result = await this.prismaService.ticket.findMany();
+
+    return result;
+  }
+
   async findById(id: number): Promise<Ticket> {
     try {
       const result = await this.prismaService.ticket.findUniqueOrThrow({

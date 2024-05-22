@@ -14,6 +14,24 @@ export class TicketUseCase {
     });
   }
 
+  async editTicket(ticket: any): Promise<any> {
+    return this.ticketRepository.editTicket({
+      id: ticket.id,
+      ...ticket,
+      date: new Date().toDateString(),
+    });
+  }
+
+  async getAll(): Promise<TicketResponseDto[]> {
+    try {
+      const result = await this.ticketRepository.getAll();
+
+      return [...result];
+    } catch (err) {
+      throw new BadRequestException(err);
+    }
+  }
+
   async findById(id: number): Promise<TicketResponseDto> {
     try {
       const result = await this.ticketRepository.findById(id);

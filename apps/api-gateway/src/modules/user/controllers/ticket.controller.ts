@@ -16,6 +16,7 @@ export class CreateTicketController {
     createTicket: 'create-ticket',
     editTicket: 'edit-ticket',
     getTicket: 'get-ticket',
+    getAllTicket: 'get-all-ticket',
   };
 
   constructor(
@@ -25,16 +26,25 @@ export class CreateTicketController {
     ticketClient.subscribeToResponseOf(this.topic.createTicket);
     ticketClient.subscribeToResponseOf(this.topic.editTicket);
     ticketClient.subscribeToResponseOf(this.topic.getTicket);
+    ticketClient.subscribeToResponseOf(this.topic.getAllTicket);
   }
 
   @Get('/ticket/:id')
   async getById(@Param('id') id: number) {
-    return await this.ticketClient.send(this.topic.getTicket, id);
+    const res = await firstValueFrom(
+      this.ticketClient.send(this.topic.getTicket, id),
+    );
+
+    return res;
   }
-  // @Get('/ticket')
-  // async getAll(@Param()) {
-  //   return await this.ticketClient.send(this.topic.getTicket,{});
-  // }
+  @Get('/ticket')
+  async getAll() {
+    const res = await firstValueFrom(
+      this.ticketClient.send(this.topic.getAllTicket, {}),
+    );
+
+    return res;
+  }
 
   @Post('/ticket')
   async createTicket(@Body() body: any) {
@@ -45,9 +55,9 @@ export class CreateTicketController {
     return res;
   }
   @Put('/ticket/:id')
-  async editTicket(@Body() body: any) {
+  async editTicket(@Param('id') id: number, body: any) {
     const res = await firstValueFrom(
-      this.ticketClient.send(this.topic.createTicket, body),
+      this.ticketClient.send(this.topic.editTicket, { id, body }),
     );
 
     return res;

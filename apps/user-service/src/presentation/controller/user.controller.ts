@@ -9,8 +9,17 @@ export class UserController {
   constructor(private readonly userUseCase: UserUseCase) {}
 
   @MessagePattern('get-user')
-  async getById(@Param('id') id: number): Promise<UserResponseDto> {
-    return await this.userUseCase.findById(id);
+  async getById(@Payload('id') id: number): Promise<UserResponseDto> {
+    const data = await this.userUseCase.findById(id);
+
+    return { ...data };
+  }
+
+  @MessagePattern('get-all-user')
+  async getAllUser(): Promise<UserResponseDto[]> {
+    const data = await this.userUseCase.getAll();
+
+    return [...data];
   }
 
   @MessagePattern('create-user')

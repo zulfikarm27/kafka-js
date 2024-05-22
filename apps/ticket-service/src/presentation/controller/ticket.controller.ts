@@ -13,11 +13,25 @@ export class TicketController {
     return await this.ticketUseCase.findById(id);
   }
 
+  @MessagePattern('get-all-ticket')
+  async getAllUser(): Promise<TicketResponseDto[]> {
+    const data = await this.ticketUseCase.getAll();
+
+    return [...data];
+  }
+
   @MessagePattern('create-ticket')
   async createTicket(
     @Payload() message: CreateTicketDto,
   ): Promise<TicketResponseDto> {
     const data = await this.ticketUseCase.addTicket(message);
+
+    return { ...data };
+  }
+
+  @MessagePattern('edit-ticket')
+  async editTicket(@Payload() message: any): Promise<TicketResponseDto> {
+    const data = await this.ticketUseCase.editTicket(message);
 
     return { ...data };
   }

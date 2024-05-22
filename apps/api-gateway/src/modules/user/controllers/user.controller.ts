@@ -7,6 +7,7 @@ export class CreateUserController {
   private readonly topic = {
     createUser: 'create-user',
     getUser: 'get-user',
+    getAllUser: 'get-all-user',
   };
 
   constructor(
@@ -15,11 +16,23 @@ export class CreateUserController {
     userClient.connect();
     userClient.subscribeToResponseOf(this.topic.createUser);
     userClient.subscribeToResponseOf(this.topic.getUser);
+    userClient.subscribeToResponseOf(this.topic.getAllUser);
   }
 
   @Get('/user/:id')
   async getById(@Param('id') id: number) {
-    return await this.userClient.send(this.topic.getUser, id);
+    const res = await firstValueFrom(
+      this.userClient.send(this.topic.getUser, { id: id }),
+    );
+    return res;
+  }
+
+  @Get('/user')
+  async getAllUser() {
+    const res = await firstValueFrom(
+      this.userClient.send(this.topic.getAllUser, {}),
+    );
+    return res;
   }
 
   @Post('/user')

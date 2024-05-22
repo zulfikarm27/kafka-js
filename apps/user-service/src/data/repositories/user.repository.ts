@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { User } from '@prisma/client';
 import { IUserRepository } from 'src/domain/repositories';
 import { PrismaService } from '../services';
@@ -18,15 +18,17 @@ export class UserRepository implements IUserRepository {
     return result;
   }
 
-  async findById(id: number): Promise<User> {
-    try {
-      const result = await this.prismaService.user.findUniqueOrThrow({
-        where: { id },
-      });
+  async getAll(): Promise<User[]> {
+    const result = await this.prismaService.user.findMany();
 
-      return { ...result, id };
-    } catch (err) {
-      throw new BadRequestException('User Not Found');
-    }
+    return result;
+  }
+
+  async findById(id: number): Promise<User> {
+    const result = await this.prismaService.user.findUnique({
+      where: { id: id },
+    });
+
+    return result;
   }
 }
